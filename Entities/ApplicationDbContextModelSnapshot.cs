@@ -209,6 +209,105 @@ namespace SmartsearchApi.Entities
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ProjectResearcher", b =>
+                {
+                    b.Property<long>("ProjectsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ResearchersId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProjectsId", "ResearchersId");
+
+                    b.HasIndex("ResearchersId");
+
+                    b.ToTable("ProjectResearcher");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.Project", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.ProjectResearcher", b =>
+                {
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ResearcherId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ResearcherId");
+
+                    b.ToTable("ProjectResearchers");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.Publication", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AssociatedProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Publications");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.Researcher", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Specialty")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Researchers");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -258,6 +357,40 @@ namespace SmartsearchApi.Entities
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectResearcher", b =>
+                {
+                    b.HasOne("SmartsearchApi.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartsearchApi.Entities.Researcher", null)
+                        .WithMany()
+                        .HasForeignKey("ResearchersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.ProjectResearcher", b =>
+                {
+                    b.HasOne("SmartsearchApi.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartsearchApi.Entities.Researcher", "Researcher")
+                        .WithMany()
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Researcher");
                 });
 #pragma warning restore 612, 618
         }
