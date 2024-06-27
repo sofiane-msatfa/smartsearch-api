@@ -18,30 +18,30 @@ public class ProjectController : ControllerBase
 
     // GET: api/Project
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<ResearcherDTO>>> GetProjects()
     {
-        var projects = await _context.Projects
-            .Include(p => p.Researchers)
+        var researcher = await _context.Researchers
+            .Include(p => p.Projects)
             .AsNoTracking()
             .ToListAsync();
 
-        var projectDtOs = projects.Select(p => new ProjectDTO(p, true));
+        var researcherDtos = researcher.Select(p => new ResearcherDTO(p, true));
 
-        return Ok(projectDtOs);
+        return Ok(researcherDtos);
     }
 
     // GET: api/Project/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProjectDTO>> GetProject(long id)
+    public async Task<ActionResult<ResearcherDTO>> GetProject(long id)
     {
-        var project = await _context.Projects
-            .Include(p => p.Researchers)
+        var researcher = await _context.Researchers
+            .Include(p => p.Projects)
             .AsNoTracking()
             .SingleOrDefaultAsync(p => p.Id == id);
 
-        if (project == null) return NotFound();
+        if (researcher == null) return NotFound();
 
-        return new ProjectDTO(project, true);
+        return new ResearcherDTO(researcher, true);
     }
 
     // PUT: api/Project/5

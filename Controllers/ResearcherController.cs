@@ -18,30 +18,27 @@ public class ResearcherController : ControllerBase
 
     // GET: api/Project
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<ResearcherDTO>>> GetResearchers()
     {
-        var projects = await _context.Projects
-            .Include(p => p.Researchers)
-            .AsNoTracking()
-            .ToListAsync();
+        var researcher = await _context.Researchers.Include(p => p.Projects).AsNoTracking().ToListAsync();
 
-        var projectDtOs = projects.Select(p => new ProjectDTO(p, true));
+        var researcherDtos = researcher.Select(p => new ResearcherDTO(p, true));
 
-        return Ok(projectDtOs);
+        return Ok(researcherDtos);
     }
 
     // GET: api/Project/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProjectDTO>> GetProject(long id)
+    public async Task<ActionResult<ResearcherDTO>> GetResearcher(long id)
     {
-        var project = await _context.Projects
-            .Include(p => p.Researchers)
+        var researcher = await _context.Researchers
+            .Include(p => p.Projects)
             .AsNoTracking()
             .SingleOrDefaultAsync(p => p.Id == id);
 
-        if (project == null) return NotFound();
+        if (researcher == null) return NotFound();
 
-        return new ProjectDTO(project, true);
+        return new ResearcherDTO(researcher, true);
     }
 
     // PUT: api/Researcher/5
@@ -70,23 +67,23 @@ public class ResearcherController : ControllerBase
     // POST: api/Project
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<NewProjectDTO>> PostProject(NewProjectDTO newProject)
-    {
-        var project = new Project(newProject);
-
-        foreach (var researcherId in newProject.ResearcherIds)
+        public async Task<ActionResult<NewResearcherDTO>> PostResearcher(NewResearcherDTO newResearcher)
         {
-            var researcher = await _context.Researchers.AsTracking().SingleOrDefaultAsync(r => r.Id == researcherId);
-            if (researcher == null) return BadRequest($"Researcher with id {researcherId} not found");
-            project.Researchers.Add(researcher);
+            var researcher = new Researcher(newResearcher);
+
+            foreach (var projectId in newResearcher.ProjectsId)
+            {
+                var project = await _context.Projects.AsTracking().SingleOrDefaultAsync(p => p.Id == projectId);
+                if (project == null) return BadRequest($"Project with id {projectId} not found");
+                researcher.Projects.Add(project);
+            }
+
+            _context.Researchers.Add(researcher);
+            await _context.SaveChangesAsync();
+
+            newResearcher.ProjectsId = researcher.Projects.Select(r => r.Id).ToList();
+            return CreatedAtAction("GetResearcher", new { id = researcher.Id }, newResearcher);
         }
-
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
-
-        newProject.ResearcherIds = project.Researchers.Select(r => r.Id).ToList();
-        return CreatedAtAction("GetProject", new { id = project.Id }, newProject);
-    }
 
     // DELETE: api/Researcher/5
     [HttpDelete("{id}")]

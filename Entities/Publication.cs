@@ -8,9 +8,10 @@ namespace SmartsearchApi.Entities;
  */
 public class Publication
 {
-    public long Id { get; set; }
-    public string Title { get; set; }
-    public string Summary { get; set; }
-    public DateTime PublicationDate { get; set; }
-    public Project AssociatedProject { get; }
+  public int Id { get; set; }
+  public string Titre { get; set; }
+  public string Resume { get; set; }
+  public int ProjectId { get; set; }
+  public Project Project { get; set; }
+  public DateTime DateDePublication { get; set; }
 }

@@ -266,25 +266,30 @@ namespace SmartsearchApi.Entities
 
             modelBuilder.Entity("SmartsearchApi.Entities.Publication", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AssociatedProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("PublicationDate")
+                    b.Property<DateTime>("DateDePublication")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Summary")
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ProjectId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Resume")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Titre")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId1");
 
                     b.ToTable("Publications");
                 });
@@ -391,6 +396,22 @@ namespace SmartsearchApi.Entities
                     b.Navigation("Project");
 
                     b.Navigation("Researcher");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.Publication", b =>
+                {
+                    b.HasOne("SmartsearchApi.Entities.Project", "Project")
+                        .WithMany("Publications")
+                        .HasForeignKey("ProjectId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("SmartsearchApi.Entities.Project", b =>
+                {
+                    b.Navigation("Publications");
                 });
 #pragma warning restore 612, 618
         }

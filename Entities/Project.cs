@@ -30,4 +30,6 @@ public class Project
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public List<Researcher> Researchers { get; } = [];
+    
+    public ICollection<Publication> Publications { get; set; } = new List<Publication>();
 }
