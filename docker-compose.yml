@@ -1,0 +1,6 @@
+﻿services:
+  smartsearchapi:
+    image: smartsearchapi
+    build:
+      context: .
+      dockerfile: Dockerfile
