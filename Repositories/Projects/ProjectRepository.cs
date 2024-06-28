@@ -40,26 +40,23 @@ public class ProjectRepository(ApplicationDbContext context) : AbstractRepositor
         
         if (!string.IsNullOrEmpty(filter.Title))
         {
-            query = query.Where(p => p.Title.Contains(filter.Title));
+            query = query.Where(p => p.Title.Contains(filter.Title.ToLower()));
         }
         
         if (!string.IsNullOrEmpty(filter.Description))
         {
-            query = query.Where(p => p.Description != null && p.Description.Contains(filter.Description));
+            query = query.Where(p => p.Description != null && p.Description.Contains(filter.Description.ToLower()));
         }
         
-        if (!string.IsNullOrEmpty(filter.StartDate))
+        if (filter.StartDateFrom != null)
         {
-            // date after or equal to the given date
-            // TODO: à documenter
-            query = query.Where(p => p.StartDate >= DateTime.Parse(filter.StartDate));
+            query = query.Where(p => p.StartDate >= filter.StartDateFrom);
         }
+            
         
-        if (!string.IsNullOrEmpty(filter.EndDate))
+        if (filter.EndDateBefore != null)
         {
-            // date before or equal to the given date
-            // TODO: à documenter
-            query = query.Where(p => p.EndDate <= DateTime.Parse(filter.EndDate));
+            query = query.Where(p => p.EndDate <= filter.EndDateBefore);
         }
         
         if (!string.IsNullOrEmpty(filter.ManagerId))
@@ -67,24 +64,19 @@ public class ProjectRepository(ApplicationDbContext context) : AbstractRepositor
             query = query.Where(p => p.ManagerId == long.Parse(filter.ManagerId));
         }
         
-        if (!string.IsNullOrEmpty(filter.ResearcherId))
-        {
-            query = query.Where(p => p.Researchers.Any(r => r.Id == long.Parse(filter.ResearcherId)));
-        }
-        
-        if (!string.IsNullOrEmpty(filter.PublicationId))
-        {
-            query = query.Where(p => p.Publications.Any(pub => pub.Id == long.Parse(filter.PublicationId)));
-        }
-        
         if (!string.IsNullOrEmpty(filter.ManagerName))
         {
             query = query.Where(p => p.Manager.Name.Contains(filter.ManagerName));
         }
         
-        if (!string.IsNullOrEmpty(filter.ResearcherName))
+        if (filter.ResearcherIds.Length > 0)
         {
-            query = query.Where(p => p.Researchers.Any(r => r.Name.Contains(filter.ResearcherName)));
+            query = query.Where(p => p.Researchers.Any(r => filter.ResearcherIds.Contains(r.Id.ToString())));
+        }
+        
+        if (filter.PublicationIds.Length > 0)
+        {
+            query = query.Where(p => p.Publications.Any(pub => filter.PublicationIds.Contains(pub.Id.ToString())));
         }
         
         return query;

@@ -8,16 +8,18 @@ namespace SmartsearchApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PublicationsController(IUnitOfWork uof, IMapper mapper): ControllerBase
+public class PublicationsController(IUnitOfWork uof, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications()
+    public async Task<ActionResult<IEnumerable<PublicationDto>>> GetPublications(
+        [FromQuery] PublicationFiltersDto? filter = null)
     {
-        var publications = await uof.Publications.GetPublicationsWithProjects();
+        var publications = await uof.Publications.GetPublicationsWithProjects(filter);
         var publicationDtos = mapper.Map<IEnumerable<PublicationDto>>(publications);
+
         return Ok(publicationDtos);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<PublicationDto>> GetPublication(long id)
     {
@@ -26,38 +28,42 @@ public class PublicationsController(IUnitOfWork uof, IMapper mapper): Controller
         {
             return NotFound();
         }
+
         var publicationDto = mapper.Map<PublicationDto>(publication);
+
         return Ok(publicationDto);
     }
-    
+
     [HttpPut("{id}")]
-    public async Task<ActionResult<PublicationLightDto>> PutPublication(long id, PublicationLightDto publicationLightDto)
+    public async Task<ActionResult<PublicationLightDto>> PutPublication(long id,
+        PublicationLightDto publicationLightDto)
     {
         if (id != publicationLightDto.Id)
         {
             return BadRequest();
         }
-        
+
         var publication = mapper.Map<Publication>(publicationLightDto);
         var updated = uof.Publications.Update(publication);
         await uof.CommitAsync();
-        
+
         var publicationLightDtoUpdated = mapper.Map<PublicationLightDto>(updated);
 
         return Ok(publicationLightDtoUpdated);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<PublicationLightDto>> PostPublication(PublicationCreateDto publicationCreateDto)
     {
         var publication = mapper.Map<Publication>(publicationCreateDto);
         var created = uof.Publications.Create(publication);
         await uof.CommitAsync();
-        
+
         var publicationLightDtoCreated = mapper.Map<PublicationLightDto>(created);
+
         return Ok(publicationLightDtoCreated);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeletePublication(long id)
     {
@@ -66,10 +72,10 @@ public class PublicationsController(IUnitOfWork uof, IMapper mapper): Controller
         {
             return NotFound();
         }
-        
+
         uof.Publications.Delete(publication);
         await uof.CommitAsync();
-        
+
         return NoContent();
     }
 }
