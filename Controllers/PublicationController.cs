@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartsearchApi.Data;
+using SmartsearchApi.DTO;
 using SmartsearchApi.Entities;
 
 namespace SmartsearchApi.Controllers
@@ -23,9 +26,14 @@ namespace SmartsearchApi.Controllers
 
         // GET: api/Publication
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Publication>>> GetPublications()
+        public async Task<ActionResult<IEnumerable<PublicationDTO>>> GetPublications()
         {
-            return await _context.Publications.ToListAsync();
+            var publications = await _context.Publications.ToListAsync();
+    
+            var publicationDtos = publications.Select(p => new PublicationDTO(p));
+            
+            return Ok(publicationDtos);
+    
         }
 
         // GET: api/Publication/5
@@ -76,12 +84,37 @@ namespace SmartsearchApi.Controllers
         // POST: api/Publication
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Publication>> PostPublication(Publication publication)
+        public async Task<ActionResult<PublicationDTO>> PostPublication(NewPublicationDTO newPublicationDto)
         {
+            if (!_context.Projects.Any(p => p.Id == newPublicationDto.ProjectId))
+            {
+                return BadRequest("Project not found");
+            }
+
+            var project = _context.Projects.FirstOrDefault(p => p.Id == newPublicationDto.ProjectId);
+
+            var publication = new Publication
+            {
+                Titre = newPublicationDto.Titre,
+                Resume = newPublicationDto.Resume,
+                ProjectId = newPublicationDto.ProjectId,
+                Project = project,
+                DateDePublication = newPublicationDto.DateDePublication
+            };
+
             _context.Publications.Add(publication);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPublication", new { id = publication.Id }, publication);
+            var publicationDTO = new PublicationDTO
+            {
+                Id = publication.Id,
+                Titre = publication.Titre,
+                Resume = publication.Resume,
+                ProjectId = publication.ProjectId,
+                DateDePublication = publication.DateDePublication
+            };
+
+            return CreatedAtAction("GetPublication", new { id = publication.Id }, publicationDTO);
         }
 
         // DELETE: api/Publication/5

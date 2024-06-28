@@ -16,7 +16,7 @@ public class ProjectController : ControllerBase
         _context = context;
     }
 
-    // GET: api/Project
+    // GET: api/Researcher
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ResearcherDTO>>> GetProjects()
     {
@@ -30,7 +30,7 @@ public class ProjectController : ControllerBase
         return Ok(researcherDtos);
     }
 
-    // GET: api/Project/5
+    // GET: api/Researcher/5
     [HttpGet("{id}")]
     public async Task<ActionResult<ResearcherDTO>> GetProject(long id)
     {
@@ -44,7 +44,7 @@ public class ProjectController : ControllerBase
         return new ResearcherDTO(researcher, true);
     }
 
-    // PUT: api/Project/5
+    // PUT: api/Researcher/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProject(long id, Project project)
@@ -67,7 +67,7 @@ public class ProjectController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Project
+    // POST: api/Researcher
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
     public async Task<ActionResult<NewProjectDTO>> PostProject(NewProjectDTO newProject)
@@ -88,7 +88,7 @@ public class ProjectController : ControllerBase
         return CreatedAtAction("GetProject", new { id = project.Id }, newProject);
     }
 
-    // DELETE: api/Project/5
+    // DELETE: api/Researcher/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProject(long id)
     {
