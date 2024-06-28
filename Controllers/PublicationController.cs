@@ -28,26 +28,33 @@ namespace SmartsearchApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PublicationDTO>>> GetPublications()
         {
-            var publications = await _context.Publications.ToListAsync();
+            var publications = await _context.Publications
+                .Include(publication => publication.Project) 
+                .ThenInclude(project => project.Researchers)
+                .ToListAsync();
     
-            var publicationDtos = publications.Select(p => new PublicationDTO(p));
-            
+            var publicationDtos = publications.Select(p => new PublicationDTO(p)).ToList();
+    
             return Ok(publicationDtos);
     
         }
 
         // GET: api/Publication/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Publication>> GetPublication(int id)
+        public async Task<ActionResult<PublicationDTO>> GetPublication(int id)
         {
-            var publication = await _context.Publications.FindAsync(id);
+            var publication = await _context.Publications
+                .Include(publication => publication.Project)
+                .ThenInclude(project => project.Researchers)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(publication => publication.Id == id);
 
             if (publication == null)
             {
                 return NotFound();
             }
 
-            return publication;
+            return new PublicationDTO(publication);
         }
 
         // PUT: api/Publication/5

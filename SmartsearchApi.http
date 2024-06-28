@@ -1,6 +1,40 @@
-@SmartsearchApi_HostAddress = http://localhost:5250
+@URL = https://localhost:7193/api/
 
-GET {{SmartsearchApi_HostAddress}}/weatherforecast/
+POST {{URL}}/Project/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Recherche sur les rayons cosmiques",
+  "description": "Etude des rayons cosmiques et de leur impact sur la santé",
+  "startDate": "2024-06-28T07:19:03.417Z",
+  "endDate": "2024-06-28T07:19:03.417Z",
+  "researcherIds": [
+    1
+  ]
+}
+
+###
+
+GET {{URL}}/Project/
 Accept: application/json
 
 ###
+
+PUT {{URL}}/Project/2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "2",
+  "title": "Exploration de la lune",
+  "description": "Etude de la lune et de ses caractéristiques",
+  "startDate": "2024-06-28T07:34:57.228Z",
+  "endDate": "2024-06-28T07:34:57.228Z"
+}
+
+###
+
+DELETE {{URL}}/Project/1
+Accept: application/json
+Content-Type: application/json
