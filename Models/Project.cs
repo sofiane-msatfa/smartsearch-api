@@ -24,7 +24,7 @@ public class Project
     
     [Required]
     public long ManagerId { get; set; }
-    public Researcher Manager { get; set; } = null!;
+    public Researcher Manager { get; } = null!;
     
     public ICollection<Researcher> Researchers { get; } = new List<Researcher>();
     

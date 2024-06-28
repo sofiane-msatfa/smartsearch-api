@@ -1,17 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartsearchApi.Models;
+namespace SmartsearchApi.Dto.Publications;
 
-public class Publication
+public class PublicationLightDto
 {
-    [Key]
     public long Id { get; set; }
-
+    
     [Required]
-    [MaxLength(100)]
+    [StringLength(100)]
     public string Title { get; set; }
 
-    [MaxLength(1500)]
+    [StringLength(1500)]
     public string? Summary { get; set; }
 
     [Required]
@@ -20,5 +19,4 @@ public class Publication
     
     [Required]
     public long ProjectId { get; set; }
-    public Project Project { get; } = null!;
 }

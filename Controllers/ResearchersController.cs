@@ -11,45 +11,68 @@ namespace SmartsearchApi.Controllers;
 public class ResearchersController(IUnitOfWork uof, IMapper mapper): ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Researcher>>> GetResearchers()
+    public async Task<ActionResult<IEnumerable<ResearcherDto>>> GetResearchers()
     {
-        var researchers = await uof.Researchers.GetAllAsync();
-        return Ok(researchers);
+        var researchers = await uof.Researchers.GetResearchersWithProjects();
+        var researchersDto = mapper.Map<IEnumerable<ResearcherDto>>(researchers);
+        return Ok(researchersDto);
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<Researcher>> GetResearcher(long id)
+    public async Task<ActionResult<ResearcherDto>> GetResearcher(long id)
+    {
+        var researcher = await uof.Researchers.GetResearcherWithProjectsById(id);
+        if (researcher == null)
+        {
+            return NotFound();
+        }
+        
+        var researcherDto = mapper.Map<ResearcherDto>(researcher);
+        return Ok(researcherDto);
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ResearcherLightDto>> PutResearcher(long id, ResearcherLightDto researcherLightDto)
+    {
+        if (id != researcherLightDto.Id)
+        {
+            return BadRequest();
+        }
+        
+        var researcher = mapper.Map<Researcher>(researcherLightDto);
+        var updated = uof.Researchers.Update(researcher);
+        await uof.CommitAsync();
+        
+        var researcherLightDtoUpdated = mapper.Map<ResearcherLightDto>(updated);
+
+        return Ok(researcherLightDtoUpdated);
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult<ResearcherLightDto>> PostResearcher(ResearcherCreateDto researcherCreateDto)
+    {
+        var researcher = mapper.Map<Researcher>(researcherCreateDto);
+        var created = uof.Researchers.Create(researcher);
+        await uof.CommitAsync();
+
+        var researcherLightDtoCreated = mapper.Map<ResearcherLightDto>(created);
+
+        return Ok(researcherLightDtoCreated);
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ResearcherLightDto>> DeleteResearcher(long id)
     {
         var researcher = await uof.Researchers.GetAsync(r => r.Id == id);
         if (researcher == null)
         {
             return NotFound();
         }
-        return Ok(researcher);
-    }
-    
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Researcher>> PutResearcher(long id, ResearcherDto researcherDto)
-    {
-        if (id != researcherDto.Id)
-        {
-            return BadRequest();
-        }
         
-        var researcher = mapper.Map<Researcher>(researcherDto);
-        var updated = uof.Researchers.Update(researcher);
+        uof.Researchers.Delete(researcher);
         await uof.CommitAsync();
         
-        return CreatedAtAction(nameof(GetResearcher), new { id = updated.Id }, updated);
-    }
-    
-    [HttpPost]
-    public async Task<ActionResult<Researcher>> PostResearcher(ResearcherCreateDto researcherDto)
-    {
-        var researcher = mapper.Map<Researcher>(researcherDto);
-        var created = uof.Researchers.Create(researcher);
-        await uof.CommitAsync();
-
-        return CreatedAtAction(nameof(GetResearcher), new { id = created.Id }, created);
+        var researcherLightDto = mapper.Map<ResearcherLightDto>(researcher);
+        return Ok(researcherLightDto);
     }
 }

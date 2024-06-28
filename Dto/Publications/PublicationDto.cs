@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SmartsearchApi.Dto.Projects;
 
 namespace SmartsearchApi.Dto.Publications;
 
@@ -19,4 +20,6 @@ public class PublicationDto
     
     [Required]
     public long ProjectId { get; set; }
+    
+    public ProjectLightDto Project { get; set; } = null!;
 }

@@ -11,22 +11,7 @@ public class AbstractRepository<T>(ApplicationDbContext context) : IAbstractRepo
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
     {
-        var query = Context.Set<T>().AsQueryable();
-        var entityType = Context.Model.FindEntityType(typeof(T));
-        
-        if (entityType == null)
-        {
-            return null;
-        }
-
-        // on récupère toutes les associations de navigation
-        foreach (var property in entityType.GetNavigations())
-        {
-            Console.WriteLine($"Including property {property.Name}");
-            query = query.Include(property.Name);
-        }
-
-        return await query.FirstOrDefaultAsync(predicate);
+        return await Context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()

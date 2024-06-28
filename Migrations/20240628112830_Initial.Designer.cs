@@ -11,7 +11,7 @@ using SmartsearchApi.Data;
 namespace SmartsearchApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240628091317_Initial")]
+    [Migration("20240628112830_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

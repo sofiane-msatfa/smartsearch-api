@@ -16,7 +16,7 @@ public class Researcher(string name)
     [MaxLength(100)]
     public string? Specialty { get; set; }
 
-    public ICollection<Project> Projects { get; set; } = new List<Project>();
+    public ICollection<Project> Projects { get; } = new List<Project>();
 
-    public ICollection<Project> ManagedProjects { get; set; } = new List<Project>();
+    public ICollection<Project> ManagedProjects { get; } = new List<Project>();
 }

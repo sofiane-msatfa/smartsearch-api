@@ -9,6 +9,7 @@ public class PublicationMappingProfile: Profile
     public PublicationMappingProfile()
     {
         CreateMap<Publication, PublicationDto>().ReverseMap();
+        CreateMap<Publication, PublicationLightDto>().ReverseMap();
         CreateMap<Publication, PublicationCreateDto>().ReverseMap();
     }
 }

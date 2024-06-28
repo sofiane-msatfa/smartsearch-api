@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using SmartsearchApi.Dto.Publications;
+using SmartsearchApi.Dto.Researchers;
 
 namespace SmartsearchApi.Dto.Projects;
 
@@ -22,5 +24,11 @@ public class ProjectDto
     public DateTime EndDate { get; set; }
     
     [Required(ErrorMessage = "The 'manager ID' is required")]
-    public long ManagerID { get; set; }
+    public long ManagerId { get; set; }
+    
+    public ResearcherLightDto Manager { get; set; } = null!;
+    
+    public ICollection<ResearcherLightDto> Researchers { get; set; } = new List<ResearcherLightDto>();
+    
+    public ICollection<ResearcherLightDto> Publications { get; set; } = new List<ResearcherLightDto>();
 }

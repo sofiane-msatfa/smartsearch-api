@@ -2,23 +2,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartsearchApi.Dto.Projects;
 
-public class ProjectCreateDto
+public class ProjectLightDto
 {
-    [Required]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+    public long Id { get; set; }
+
+    [Required(ErrorMessage = "The 'title' is required")]
+    [StringLength(100)]
     public string Title { get; set; }
-    
+
     [StringLength(1500)]
     public string? Description { get; set; }
-    
-    [Required]
+
+    [Required(ErrorMessage = "The 'start date' is required")]
     [DataType(DataType.Date)]
     public DateTime StartDate { get; set; }
-    
-    [Required]
+
+    [Required(ErrorMessage = "The 'end date' is required")]
     [DataType(DataType.Date)]
     public DateTime EndDate { get; set; }
     
-    [Required]
+    [Required(ErrorMessage = "The 'manager ID' is required")]
     public long ManagerId { get; set; }
 }

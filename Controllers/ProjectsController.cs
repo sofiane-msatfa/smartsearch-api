@@ -11,53 +11,60 @@ namespace SmartsearchApi.Controllers;
 public class ProjectsController(IUnitOfWork uof, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
     {
-        var projects = await uof.Projects.GetAllAsync();
+        var projects = await uof.Projects.GetProjectsWithRelations();
+        var projectsDto = mapper.Map<IEnumerable<ProjectDto>>(projects);
 
-        return Ok(projects);
+        return Ok(projectsDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Project>> GetProject(long id)
+    public async Task<ActionResult<ProjectDto>> GetProject(long id)
     {
-        var project = await uof.Projects.GetAsync(p => p.Id == id);
+        var project = await uof.Projects.GetProjectWithRelationsById(id);
 
         if (project == null)
         {
             return NotFound();
         }
+        
+        var projectDto = mapper.Map<ProjectDto>(project);
 
-        return Ok(project);
+        return Ok(projectDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Project>> PutProject(long id, ProjectDto projectDto)
+    public async Task<ActionResult<ProjectLightDto>> PutProject(long id, ProjectLightDto projectLightDto)
     {
-        if (id != projectDto.Id)
+        if (id != projectLightDto.Id)
         {
             return BadRequest();
         }
 
-        var project = mapper.Map<Project>(projectDto);
+        var project = mapper.Map<Project>(projectLightDto);
         var updated = uof.Projects.Update(project);
         await uof.CommitAsync();
 
-        return CreatedAtAction(nameof(GetProject), new { id = updated.Id }, updated);
+        var projectLightDtoUpdated = mapper.Map<ProjectLightDto>(updated);
+
+        return Ok(projectLightDtoUpdated);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Project>> PostProject(ProjectCreateDto projectDto)
+    public async Task<ActionResult<ProjectLightDto>> PostProject(ProjectCreateDto projectCreateDto)
     {
-        var project = mapper.Map<Project>(projectDto);
+        var project = mapper.Map<Project>(projectCreateDto);
         var created = uof.Projects.Create(project);
         await uof.CommitAsync();
 
-        return CreatedAtAction(nameof(GetProject), new { id = created.Id }, created);
+        var projectLightDto = mapper.Map<ProjectLightDto>(created);
+
+        return Ok(projectLightDto);
     }
 
     [HttpDelete]
-    public async Task<ActionResult<ProjectDto>> DeleteProject(long id)
+    public async Task<IActionResult> DeleteProject(long id)
     {
         var project = await uof.Projects.GetAsync(p => p.Id == id);
         if (project == null)

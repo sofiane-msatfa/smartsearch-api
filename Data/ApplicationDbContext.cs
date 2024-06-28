@@ -29,5 +29,11 @@ public class ApplicationDbContext : IdentityDbContext
             .WithMany(r => r.ManagedProjects)
             .HasForeignKey(p => p.ManagerId)
             .IsRequired();
+        
+        modelBuilder.Entity<Publication>()
+            .HasOne(p => p.Project)
+            .WithMany(p => p.Publications)
+            .HasForeignKey(p => p.ProjectId)
+            .IsRequired();
     }
 }

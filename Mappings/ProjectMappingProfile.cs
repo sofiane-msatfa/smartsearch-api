@@ -9,6 +9,7 @@ public class ProjectMappingProfile: Profile
     public ProjectMappingProfile()
     {
         CreateMap<Project, ProjectDto>().ReverseMap();
+        CreateMap<Project, ProjectLightDto>().ReverseMap();
         CreateMap<Project, ProjectCreateDto>().ReverseMap();
     }
 }
