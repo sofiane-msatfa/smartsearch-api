@@ -11,9 +11,9 @@ namespace SmartsearchApi.Controllers;
 public class ProjectsController(IUnitOfWork uof, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects([FromQuery] ProjectFiltersDto? filter = null)
     {
-        var projects = await uof.Projects.GetProjectsWithRelations();
+        var projects = await uof.Projects.GetProjectsWithRelations(filter);
         var projectsDto = mapper.Map<IEnumerable<ProjectDto>>(projects);
 
         return Ok(projectsDto);
@@ -28,7 +28,7 @@ public class ProjectsController(IUnitOfWork uof, IMapper mapper) : ControllerBas
         {
             return NotFound();
         }
-        
+
         var projectDto = mapper.Map<ProjectDto>(project);
 
         return Ok(projectDto);

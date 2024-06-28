@@ -30,5 +30,5 @@ public class ProjectDto
     
     public ICollection<ResearcherLightDto> Researchers { get; set; } = new List<ResearcherLightDto>();
     
-    public ICollection<ResearcherLightDto> Publications { get; set; } = new List<ResearcherLightDto>();
+    public ICollection<PublicationLightDto> Publications { get; set; } = new List<PublicationLightDto>();
 }
