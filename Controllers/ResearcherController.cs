@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SmartsearchApi.Data;
+using SmartsearchApi.DTO;
 using SmartsearchApi.Entities;
 
 namespace SmartsearchApi.Controllers;
@@ -44,11 +46,39 @@ public class ResearcherController : ControllerBase
     // PUT: api/Researcher/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutResearcher(long id, Researcher researcher)
+    public async Task<IActionResult> PutResearcher(long id, UpdateResearcherDTO updatedResearcherDTO)
     {
-        if (id != researcher.Id) return BadRequest();
+        if (id != updatedResearcherDTO.Id) return BadRequest();
 
-        _context.Entry(researcher).State = EntityState.Modified;
+        var existingResearcher = await _context.Researchers
+            .Include(r => r.Projects)
+            .SingleOrDefaultAsync(r => r.Id == id);
+
+        if (existingResearcher == null) return NotFound();
+
+        // Update researcher properties only if they are provided
+        if (!string.IsNullOrEmpty(updatedResearcherDTO.Name))
+        {
+            existingResearcher.Name = updatedResearcherDTO.Name;
+        }
+        if (!string.IsNullOrEmpty(updatedResearcherDTO.Specialty))
+        {
+            existingResearcher.Specialty = updatedResearcherDTO.Specialty;
+        }
+
+        // Update projects only if a new list is provided
+        if (updatedResearcherDTO.ProjectsId != null && updatedResearcherDTO.ProjectsId.Any())
+        {
+            existingResearcher.Projects.Clear();
+            foreach (var projectId in updatedResearcherDTO.ProjectsId)
+            {
+                var project = await _context.Projects.AsTracking().SingleOrDefaultAsync(p => p.Id == projectId);
+                if (project == null) return BadRequest($"Project with id {projectId} not found");
+                existingResearcher.Projects.Add(project);
+            }
+        }
+
+        _context.Entry(existingResearcher).State = EntityState.Modified;
 
         try
         {

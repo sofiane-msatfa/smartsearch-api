@@ -1,0 +1,39 @@
+@URL = https://localhost:7193/api/
+
+POST {{URL}}/Researcher/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "string",
+  "specialty": "string",
+  "projectsId": [
+    0
+  ]
+}
+
+
+###
+
+GET {{URL}}/Project/
+Accept: application/json
+
+###
+
+PUT {{URL}}/Project/2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "string",
+  "specialty": "string",
+  "projectsId": [
+    0
+  ]
+}
+
+###
+
+DELETE {{URL}}/Project/1
+Accept: application/json
+Content-Type: application/json

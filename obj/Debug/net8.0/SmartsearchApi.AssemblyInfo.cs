@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartsearchApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36d3b7834fb6a524abc841980c1ea1fef5b5c047")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3dc0f273031220f89a14e9c7fac329e4b9db9a02")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartsearchApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartsearchApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
