@@ -31,11 +31,27 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(
-    typeof(ProjectMappingProfile), 
-    typeof(ResearcherMappingProfile), 
+    typeof(ProjectMappingProfile),
+    typeof(ResearcherMappingProfile),
     typeof(PublicationMappingProfile));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Cors
+// var allowedOrigins = "_allowedOrigins";
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            //policy.WithOrigins("http://localhost:5173")
+            //  .WithMethods("GET", "POST", "PUT", "DELETE")
+            //.AllowAnyHeader();
+
+            policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        })
+);
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -79,6 +95,7 @@ app.UseHttpsRedirection();
 
 // app.UseAuthorization();
 // app.UseAuthentication();
+app.UseCors();
 
 app.MapGroup("/identity").MapIdentityApi<IdentityUser>();
 app.MapControllers();

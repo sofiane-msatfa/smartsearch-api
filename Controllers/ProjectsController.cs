@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartsearchApi.Dto.Projects;
 using SmartsearchApi.Models;
@@ -7,6 +8,7 @@ using SmartsearchApi.Repositories.UnitOfWork;
 namespace SmartsearchApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ProjectsController(IUnitOfWork uof, IMapper mapper) : ControllerBase
 {
